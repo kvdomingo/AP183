@@ -10,7 +10,7 @@
 \usepackage{graphicx}      % for importing eps figures
 \usepackage{amsmath}       % for advanced math symbols
 \usepackage[affil-sl]{authblk} 			% found in preprint bundle package, http://ctan.org/pkg/preprint
-\usepackage[margin=2.5cm]{geometry} % paper and margin formats as set by SPP
+\usepackage[margin=2cm, bottom=3.5cm]{geometry} % paper and margin formats as set by SPP
 \usepackage{subfig}
 
 \parindent 0.5cm    % paragraphs indent
@@ -67,13 +67,16 @@
 % styling for the second page onwards
 \usepackage{lastpage}
 \renewcommand{\headrulewidth}{0.1pt}
-\renewcommand{\footrulewidth}{0pt}
+%\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{2.5cm}
 \fancyhf[l]{}
 \fancyhf[r]{}
 \fancyhf[c]{}
 \fancyfoot[l]{}
-\fancyhead[l]{}
-\fancyhead[r]{Page \thepage \hspace{1pt} of \pageref{LastPage}}
+\fancyfoot[c]{}
+\fancyfoot[r]{}
+\fancyhead[l]{DOMINGO, Kenneth V. \\ 2015-03116}
+\fancyhead[r]{Page \thepage \hspace{1pt} of \pageref{LastPage} \\ App Physics 183}
 \pagestyle{fancy}
 
 % other packages and macros
