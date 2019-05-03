@@ -108,7 +108,7 @@ with a desired peak at 0.25 s after excitation with an overshoot of no more than
 \item \textbf{Compensator gain}
 
 \begin{align}
-	K_c &= \ddfrac{1}{\abs{G(s_d)\frac{s_d + p_c}{s_d + z_c}}} \\
+	K_c &= \ddfrac{1}{\abs{G(s_d)\frac{s_d + z_c}{s_d + p_c}}} \\
 	&= \ddfrac{1}{\abs{-0.02 + 0.01j \frac{-3.67 + 12.57j - 8.94}{-3.67 + 12.57j - 19.18}}} \\
 	\Aboxed{
 		K_c &= 82.11
