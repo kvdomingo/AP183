@@ -108,7 +108,7 @@ with a desired peak at 0.25 s after excitation with an overshoot of no more than
 \item \textbf{Compensator gain}
 
 \begin{align}
-	K_c &= \ddfrac{1}{\abs{G(s_d)\frac{s_d + p_c}{s_d + z_c}}} \\
+	K_c &= \ddfrac{1}{\abs{G(s_d)\frac{s_d + z_c}{s_d + p_c}}} \\
 	&= \ddfrac{1}{\abs{-0.02 + 0.01j \frac{-3.67 + 12.57j - 8.94}{-3.67 + 12.57j - 19.18}}} \\
 	\Aboxed{
 		K_c &= 82.11
@@ -126,15 +126,15 @@ with a desired peak at 0.25 s after excitation with an overshoot of no more than
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.75\linewidth]{compensator-step.png}
+	\includegraphics[width=0.9\linewidth]{compensator-step.png}
 	\caption{Step function response of the system with a lead compensator. Due to rounding-off errors, the peak time occurs at  $t = 0.229$ s.}
 	\label{fig:comp-design}
 \end{figure}
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.75\linewidth]{compensator-step.png}
-	\caption{Step function response of the system with a lead compensator. Due to rounding-off errors, the peak time occurs at  $t = 0.229$ s.}
+	\includegraphics[width=0.9\linewidth]{compensator-pole.png}
+	\caption{Pole-zero map of the system with a lead compensator. The percent overshoot is exactly 40\%.}
 	\label{fig:comp-design}
 \end{figure}
 
@@ -150,14 +150,13 @@ with a desired peak at 0.25 s after excitation with an overshoot of no more than
 	tabsize=4,
 	numbers=left,
 	numberstyle=\tiny\ttfamily,
-	caption={Source code},
+	caption={Source code.},
 	label=list:source
 }
 \begin{lstlisting}
 import numpy as np
 import matplotlib.pyplot as mp
 import matplotlib.ticker as tick
-import control
 
 
 class LeadCompensator:
@@ -207,28 +206,27 @@ class LeadCompensator:
         self.wn = np.pi/(Tp * np.sqrt(1 - self.zeta**2))
         self.sd = -self.zeta*self.wn + 1j*self.wn*np.sqrt(1 - self.zeta**2)
         self.Gsd = self.G(self.sd)
-        phiGsd = np.degrees(np.arctan2(self.Gsd.imag, self.Gsd.real))
-        self.phid = 180 - phiGsd
+        phiGsd = np.arctan2(self.Gsd.imag, self.Gsd.real)
+        self.phid = np.pi - phiGsd
         
-    def initCompensator(self, z):
-        alpha = np.arctan2(np.sqrt(1 - self.zeta**2), self.zeta)
-        self.zc = -self.wn*np.sqrt(1 - z**2) * \
-                    np.tan((alpha - self.phid)/2) - self.zeta*self.wn
-        self.pc = -self.wn*np.sqrt(1 - z**2) * \
-                    np.tan((alpha + self.phid)/2) - self.zeta*self.wn
-        self.K = 1/abs(self.Gsd*(self.sd + self.pc)/(self.sd + self.zc))
-        
+    def initCompensator(self):
+        self.alpha = np.arctan2(np.sqrt(1 - self.zeta**2), self.zeta)
+        self.zc = -self.wn*np.sqrt(1 - self.zeta**2) * \
+                    np.tan((self.alpha - self.phid)/2) - self.zeta*self.wn
+        self.pc = -self.wn*np.sqrt(1 - self.zeta**2) * \
+                    np.tan((self.alpha + self.phid)/2) - self.zeta*self.wn
+        self.K = 1/abs(self.Gsd*(self.sd + self.zc)/(self.sd + self.pc))
         
 def G(s):
-    return 3/(s**2 + s)
-
-
+	return 3/(s**2 + s)
+	
 w = np.logspace(-1, 2, 500)
 sys = LeadCompensator(w)
 sys.initTransferFunc(G)
 sys.initNegativeFeedback(1)
 sys.BodePlot(True, "sys_bode.png")
 sys.initDesired(0.4, 0.25)
+sys.initCompensator()
 \end{lstlisting}
 
 \end{document}
